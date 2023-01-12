@@ -29,6 +29,33 @@ public class Lineup {
 	 */
 	private void computeScores() {
 		// TODO
+		for (Penguin penguin : attackers) {
+			this.teamSkill += penguin.attack;
+			for (Penguin otherPenguin : attackers) {
+				this.teamSynergy += penguin.getSynergy(otherPenguin);
+			}
+			for (Penguin penguin2 : defenders) {
+				this.teamSynergy += penguin.getSynergy(penguin2);
+			}
+			for (Penguin penguin2 : supporters) {
+				this.teamSynergy += penguin.getSynergy(penguin2);
+			}
+		}
+		for (Penguin penguin : defenders) {
+			this.teamSkill += penguin.defence;
+			for (Penguin penguin2 : defenders) {
+				this.teamSynergy += penguin.getSynergy(penguin2);
+			}
+			for (Penguin penguin2 : supporters) {
+				this.teamSynergy += penguin.getSynergy(penguin2);
+			}
+		}
+		for (Penguin penguin : supporters) {
+			for (Penguin penguin2 : supporters) {
+				this.teamSynergy += penguin.getSynergy(penguin2);
+			}
+		}
+		this.teamScore = this.teamSkill + this.teamSynergy;
 	}
 
 	public int getTeamScore() {
@@ -83,8 +110,8 @@ public class Lineup {
 	public static void main(String[] args) {
 		final boolean testComputeScores = true;
 		final boolean testComputeOptimalLineup = false;
-		final boolean testSmallExample = true;
-		final boolean testLargeExample = false;
+		final boolean testSmallExample = false;
+		final boolean testLargeExample = true;
 
 		if (testComputeScores) {
 			// example: computeScores small
@@ -165,4 +192,6 @@ public class Lineup {
 			}
 		}
 	}
+
+
 }
