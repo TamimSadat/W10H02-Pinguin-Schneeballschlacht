@@ -29,10 +29,11 @@ public class Lineup {
 	 */
 	private void computeScores() {
 		// TODO
+
 		for (Penguin penguin : attackers) {
 			this.teamSkill += penguin.attack;
-			for (Penguin otherPenguin : attackers) {
-				this.teamSynergy += penguin.getSynergy(otherPenguin);
+			for (Penguin Penguin2 : attackers) {
+				this.teamSynergy += penguin.getSynergy(Penguin2);
 			}
 			for (Penguin penguin2 : defenders) {
 				this.teamSynergy += penguin.getSynergy(penguin2);
@@ -51,6 +52,7 @@ public class Lineup {
 			}
 		}
 		for (Penguin penguin : supporters) {
+			this.teamSkill += penguin.support;
 			for (Penguin penguin2 : supporters) {
 				this.teamSynergy += penguin.getSynergy(penguin2);
 			}
