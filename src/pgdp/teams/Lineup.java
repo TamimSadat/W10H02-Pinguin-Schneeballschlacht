@@ -106,7 +106,7 @@ public class Lineup {
 	public static Lineup computeOptimalLineup(Set<Penguin> players, int numberAttackers, int numberDefenders, int numberSupporters) {
 		// TODO
 		//Edge case
-		if (players.size() > numberAttackers + numberDefenders + numberSupporters) {
+		if (numberAttackers == 0 && numberDefenders == 0 && numberSupporters == 0) {
 			Set<Penguin> emptySet = new HashSet<>(0);
 			return new Lineup(emptySet, emptySet, emptySet);
 		}
