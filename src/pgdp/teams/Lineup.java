@@ -1,6 +1,6 @@
 package pgdp.teams;
 
-import java.util.Set;
+import java.util.*;
 
 public class Lineup {
 	private final int numberAttackers;
@@ -103,15 +103,77 @@ public class Lineup {
 	 * @param numberSupporters the number of defender in the {@code LineUp}
 	 * @return a {@code LineUp} with optimal configuration
 	 */
-	public static Lineup computeOptimalLineup(Set<Penguin> players, int numberAttackers, int numberDefenders,
-			int numberSupporters) {
+	public static Lineup computeOptimalLineup(Set<Penguin> players, int numberAttackers, int numberDefenders, int numberSupporters) {
 		// TODO
-		return null;
-	}
+		//Edge case
+		if (players.size() > numberAttackers + numberDefenders + numberSupporters) {
+			Set<Penguin> emptySet = new HashSet<>(0);
+			return new Lineup(emptySet, emptySet, emptySet);
+		}
+		Lineup optimalLineup = null;
+		int maxTeamScore = 0;
+		Penguin[] arrPlayers = new Penguin[players.size()];
+		Penguin[][] possibleLineups = getPossibleLineups(players.toArray(arrPlayers)); //Alle möglichen Lineup Kombinationen
 
+		for (Penguin[] lineupArr : possibleLineups) {//Vergleich der Lineups
+			int count = 0;
+			Set<Penguin> attackersSet = new HashSet<>();
+			Set<Penguin> defendersSet = new HashSet<>();
+			Set<Penguin> supportersSet = new HashSet<>();
+			while (count < numberAttackers) {
+				attackersSet.add(lineupArr[count]);
+				count++;
+			}
+			while (count < numberDefenders + numberAttackers) {
+				defendersSet.add(lineupArr[count]);
+				count++;
+			}
+			while (count < numberSupporters + numberDefenders + numberAttackers) {
+				supportersSet.add(lineupArr[count]);
+				count++;
+			}
+			Lineup currentLineup = new Lineup(attackersSet, defendersSet, supportersSet);//Werte aus lineupArr entnommen
+			if (currentLineup.getTeamScore() > maxTeamScore) {
+				maxTeamScore = currentLineup.getTeamScore();
+				optimalLineup = currentLineup;
+			}
+		}
+		return optimalLineup;
+	}
+	//Quelle getPossibleLineups: Zentralübungen zu Permutationen aus W04
+	public static Penguin[][] getPossibleLineups (Penguin[] arrPlayers) {
+		if(arrPlayers.length == 0) {
+			return new Penguin[][] {{}};
+		}
+		// Berechne Kombinationen außer dem ersten Eintrag
+		Penguin[] arrayTail = new Penguin[arrPlayers.length - 1];
+		for(int i = 0; i < arrPlayers.length - 1; i++) {
+			arrayTail[i] = arrPlayers[i + 1];
+		}
+		Penguin[][] tail = getPossibleLineups(arrayTail);
+		// Erste Eintrag wird an jeder Kombination hinzugefügt
+		Penguin[][] possibleLineups = new Penguin[tail.length * arrPlayers.length][arrPlayers.length];
+		int nextPos = 0;
+		for(int posOfFirst = 0; posOfFirst < arrPlayers.length; posOfFirst++) {
+			for(int i = 0; i < tail.length; i++) {
+				Penguin[] combinationWithoutFirst = tail[i];
+				Penguin[] combination = new Penguin[arrPlayers.length];
+				int j = 0;
+				for(; j < Math.min(posOfFirst, arrPlayers.length - 1); j++) {
+					combination[j] = combinationWithoutFirst[j];
+				}
+				combination[posOfFirst] = arrPlayers[0];
+				for(; j < arrPlayers.length - 1; j++) {
+					combination[j + 1] = combinationWithoutFirst[j];
+				}
+				possibleLineups[nextPos++] = combination;
+			}
+		}
+		return possibleLineups;
+	}
 	public static void main(String[] args) {
-		final boolean testComputeScores = true;
-		final boolean testComputeOptimalLineup = false;
+		final boolean testComputeScores = false;
+		final boolean testComputeOptimalLineup = true;
 		final boolean testSmallExample = false;
 		final boolean testLargeExample = true;
 
